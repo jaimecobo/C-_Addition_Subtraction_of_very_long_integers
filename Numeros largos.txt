@@ -1,0 +1,311 @@
+const 
+  numnodes = 500;
+type
+  nodeptr = 0..numnodes;
+
+  nodetype = record
+    info: integer;
+    izq, der: integer;
+  emd;
+
+var
+  node: array[1..numnodes] of nodetype;
+
+//************************************************************
+
+procedure delete(p: nodeptr; var x:integer);
+var
+  r, q: nodeptr;
+
+begin
+  if p=0 then
+    error('void deletion')
+  else begin
+    x:=node[p].info;
+    q:=node[p].izq;
+    r:=node[p].reght;
+    node[q].der:=r;
+    node[r].izq:=q;
+    freenode(p);
+  end;
+end;
+
+//************************************************************
+
+procedure insertder(p: nodeptr; x:integer);
+var
+  r, q: nodeptr;
+
+begin
+  if p=o then
+    error('void insertion')
+  else begin
+    q:=getnode;
+    node[q].info:=x;
+    r:=node[p].der;
+    node[r].izq:=q;
+    node[q].der:=r;
+    node[q].izq:=p;
+    node[p].der:=q;
+  end;
+end;
+
+//************************************************************
+
+type comptype = (lessthan, equalto, graterthan);
+
+function compabs(p, q: nodeptr): comptype;
+var
+  r, s: nodeptr;
+  equal: boolean;
+begin
+  // compara los contadores
+  if abs(node[p].info) > abs(node[q].info) then
+    compabs:=greaterthan
+  else
+    if abs(node[p].info) < abs(node[q].info) then\
+      compabs:=lessthan;
+    else begin // son de igual longitud
+      r:=node[p].izq;
+      s:=node[q].izq;
+      equal:=true;
+      // recorra la lista a partir del digito mas significante
+      while (r<>p) and (equal) do begin
+        if node[r].info > node[s].info then begin
+          equal:=false;
+          compabs:=greaterthan
+        end;
+        if node[r].info < node.[s].info then begin
+          equal:=false;
+          compabs:=lessthan
+        end;
+        if node[r].info = node.[s].info then begin
+          r:=node[r].izq;
+          s:=node[s].izq;
+        end;
+      end;//while (r<>p) and (equal)
+      if equal then
+         compabs:=equalto
+    end;//if abs(node[p].info) < abs(node[q].info)
+end;
+
+//************************************************************
+
+function addiff(p,q: nodeptr): nodeptr;
+const
+  hunthou = 100000;
+var
+  r, s, zeroptr, pptr, qptr: nodeptr;
+  zeroflag: boolean;
+  borrow: 0..1;
+  diff, count: integer;
+begin
+  count:=0;     // inicializar variables
+  borrow:=0;
+  zeroflag:=0;
+
+  r:=getnode;   // genera un nodo de encabezado para la suma
+  node[r].izq:=r;
+  node[r].der:=r;
+
+  pptr:=node[p].der; // recorre las dos listas
+  qpre:=node[q].der;
+
+  while qptr<>q do begin
+    diff:=node[pptr].info - borrow - node[qptr].info;
+    if diff>=0 then
+      borrow:=0
+    else begin
+      diff:=diff+hunthou;
+      borrow:=1;
+    end;
+    // genera un nuevo nodo y los inserta a la
+    // izquierda del encabezamiento en la suma
+    insertizq(r,diff);
+    count:=count+1;
+    // pruebas para nodo cero
+    if diff = 0 then begin
+      if not zeroflag then
+        zeroptr:=node[r].izq;
+        zeroflag:=true;
+    end
+    else
+      zeroflag:=false;
+    pptr:=node[pptr].der;
+    qptr:=node[qptr].der;
+  end;// while qptr<>q do begin
+
+  // recorra el resto de la lista p
+  while p<> pptr do begin
+    diff:=node[pptr].info - borrow;
+    if diff >= 0 then
+      borrow:=0
+    else begin
+      diff:=diff+hunthou;
+      borrow:=1;
+    end;
+    insertizq(r, diff);
+    count:=count+1;
+    if diff = 0 then begin
+      if not zeroflag then
+        zeroptr:=node[r].izq;
+      zeroflag:=true;
+    end
+    else
+      zeroflag:=false;
+    pptr:=node[pptr].der;
+  end;// while p<> pptr do begin
+  if zeroflag then
+    while zeroptr<>r do begin
+      s:=zeroptr;
+      zeroptr:=node[zeroptr].der;
+      delete(s, diff);
+      count:=count-1;
+    end;
+  //inserte contador y signo en el encabezamiento
+  if node[o].info>0 then
+    node[r].info:=count
+  else
+    node[r].info:=-count;
+  addiff:=r;
+end;
+
+//************************************************************
+
+function addint(p, q:nodeptr):nodeptr;
+type
+  comptype=(lessthan, equalto, greaterthan);
+begin
+  // revise si los enteros son del mismo signo
+  if node[p].info * node[q].info > 0 then
+    addint:=addsame(p,q)
+  else // revise para ver cual tiene el valo absoluto mayor
+    if compabs(p,q)=greaterthan then
+      addint:=addiff(p,q)
+    else
+      addint:=addiff(q,p);
+end;
+
+
+//***********************************************************
+//***********************************************************
+//***********************************************************
+
+tnumeros::tnumeros()
+{
+  for(int i = 0; i<NUMNODOS; i++){
+    nodo[i].izq = i-1;
+    nodo[i].info = 0;
+    nodo[i].der = i+1;
+  };
+  nodo[0].izq = NUMNODOS-1;
+  nodo[NUMNODOS-1].der = 0;
+  nodoslibres = NUMNODOS;
+  plibre = 0;
+};
+
+void tnumeros::borrar(int &p, int &x)
+{
+  int r, q;
+
+  if( p == 0 ){
+    nodo[p].
+    //error('void deletion')
+  }
+  else{
+    x=nodo[p].info;
+    q=nodo[p].izq;
+    r=nodo[p].der;
+    nodo[q].der=r;
+    nodo[r].izq=q;
+    liberarnodo(p);
+  };
+};
+
+
+void tnumeros::liberarnodo(int p)
+{
+  if (plibre == -1){// si no hay libres
+    nodo[p].izq=p;
+    nodo[p].der=p;
+    plibre = p;
+  }
+  else if (p < plibre){// insertar al principio de los libres
+    nodo[p].der = plibre;
+    nodo[p].izq = nodo[plibre].izq;
+
+    nodo[ nodo[plibre].izq ].der = p;
+
+    nodo[plibre].izq = p;
+  }
+  else{// buscar posicion a insertar
+    int k = plibre;
+    while( (k<p) && (nodo[k].der != plibre) ){
+      k = nodo[k].der;
+    }
+    if (nodo[k].der == plibre){// insertar al final
+      nodo[k].der = p;
+      nodo[p].izq = k;
+      nodo[p].der = plibre;
+      nodo[plibre].izq = p;
+    }
+    else{// insertar al medio, k esta a la izq de p
+      nodo[p].izq = k;
+      nodo[p].der = nodo[k].der;
+      nodo[k].der = p;
+      nodo[ nodo[p].der ].izq = p;
+    }
+  }
+  nodo[p].info=0;
+  nodoslibres++;
+};
+
+int tnumeros::obtnodo(void)
+{
+  int p;
+
+  if (nodoslibres > 0){// si hay nodos libres
+    if (plibre == nodo[plibre].der){// si es el ultimo nodo libre
+      p = plibre;
+      plibre = -1;
+    }
+    else{
+      p = plibre;
+      nodo[ nodo[plibre].der ].izq = nodo[plibre].izq;
+      nodo[ nodo[plibre].izq ].der = nodo[plibre].der;
+      plibre = nodo[plibre].der;
+    }
+    nodoslibres--;
+  }
+  else// no hay nodos libres
+    return -1;
+
+  return p;
+}
+
+procedure insertarder(p: nodeptr; x:integer);
+var
+  r, q: nodeptr;
+
+begin
+  if p=o then
+    error('void insertion')
+  else begin
+    q:=getnode;
+    node[q].info:=x;
+    r:=node[p].der;
+    node[r].izq:=q;
+    node[q].der:=r;
+    node[q].izq:=p;
+    node[p].der:=q;
+  end;
+
+
+
+
+
+
+
+
+
+
